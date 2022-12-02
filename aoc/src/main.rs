@@ -53,7 +53,7 @@ fn read_file(filepath: String) -> String {
 fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
     match day {
         1 => Some(Box::new(DayOne{})),
-        2 => Some(Box::new(DayTwo{}))
+        2 => Some(Box::new(DayTwo{})),
         // ...
         _ => None
     }
