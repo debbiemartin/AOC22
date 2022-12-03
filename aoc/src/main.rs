@@ -4,8 +4,11 @@ pub mod problem;
 use crate::problem::Problem;
 use crate::days::day_1::DayOne;
 use crate::days::day_2::DayTwo;
+use crate::days::day_3::DayThree;
 use std::fs;
 use std::env;
+use std::time::Instant;
+
 
 fn main() {
     let day = get_day().unwrap();
@@ -13,11 +16,17 @@ fn main() {
     let input_name = format!("./src/inputs/input_{}.txt", day);
     let input = read_file(input_name);
     let problem = day_to_problem(day).unwrap();
+    let now = Instant::now();
     let part_1 = problem.part_one(&input);
     println!("Part 1 answer: {}", part_1);
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
     
+    let now = Instant::now();
     let part_2 = problem.part_two(&input);
     println!("Part 2 answer: {}", part_2);
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
 } 
 
 fn get_day() -> Option<usize> {
@@ -54,6 +63,7 @@ fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
     match day {
         1 => Some(Box::new(DayOne{})),
         2 => Some(Box::new(DayTwo{})),
+        3 => Some(Box::new(DayThree{})),
         // ...
         _ => None
     }
