@@ -2,9 +2,7 @@ pub mod days;
 pub mod problem;
 
 use crate::problem::Problem;
-use crate::days::day_1::DayOne;
-use crate::days::day_2::DayTwo;
-use crate::days::day_3::DayThree;
+use crate::days::*;
 use std::fs;
 use std::env;
 use std::time::Instant;
@@ -61,9 +59,10 @@ fn read_file(filepath: String) -> String {
 
 fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
     match day {
-        1 => Some(Box::new(DayOne{})),
-        2 => Some(Box::new(DayTwo{})),
-        3 => Some(Box::new(DayThree{})),
+        1 => Some(Box::new(day_1::DayOne{})),
+        2 => Some(Box::new(day_2::DayTwo{})),
+        3 => Some(Box::new(day_3::DayThree{})),
+        4 => Some(Box::new(day_4::DayFour{})),
         // ...
         _ => None
     }
