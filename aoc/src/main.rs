@@ -1,6 +1,9 @@
 pub mod days;
 pub mod problem;
 
+#[macro_use]
+extern crate lazy_static;
+
 use crate::problem::Problem;
 use crate::days::*;
 use std::fs;
@@ -63,6 +66,7 @@ fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
         2 => Some(Box::new(day_2::DayTwo{})),
         3 => Some(Box::new(day_3::DayThree{})),
         4 => Some(Box::new(day_4::DayFour{})),
+        5 => Some(Box::new(day_5::DayFive{})),
         // ...
         _ => None
     }
