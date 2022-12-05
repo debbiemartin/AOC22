@@ -2,16 +2,15 @@ use crate::problem::Problem;
 
 pub struct DayOne {}
 
-fn parse(input: &str) -> Vec<i32> {    
-    // Consumes the iterator, returns an (Optional) String
+fn parse(input: &str) -> Vec<i32> {
     let mut sum = 0;
     let mut elf_scores = Vec::new();
     for line in input.split("\n") {
-        if line == "" {
+        if line.trim() == "" {
             elf_scores.push(sum);
             sum = 0;
         } else {
-            sum += line.parse::<i32>().unwrap();
+            sum += line.trim().parse::<i32>().unwrap();
         }
     }
 
@@ -42,5 +41,47 @@ impl Problem for DayOne {
 
 #[cfg(test)]
 mod tests {
-    //@@@ DGM add some tests
+    use super::*;
+
+    #[test]
+    fn test_d1_p1() {
+        let input = "1000
+        2000
+        3000
+        
+        4000
+        
+        5000
+        6000
+        
+        7000
+        8000
+        9000
+        
+        10000
+        ";
+        let result: String = DayOne{}.part_one(&input);
+        assert_eq!(result, "Maximum elf score: 24000");
+    }
+
+    #[test]
+    fn test_d1_p2() {
+        let input = "1000
+        2000
+        3000
+        
+        4000
+        
+        5000
+        6000
+        
+        7000
+        8000
+        9000
+        
+        10000
+        ";
+        let result: String = DayOne{}.part_two(&input);
+        assert_eq!(result, "Sum of top 3 elf scores: 45000");
+    }
 }
