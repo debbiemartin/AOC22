@@ -5,8 +5,9 @@ use regex::Regex;
 
 pub struct DaySeven {}
 
+#[allow(dead_code)]
 struct File {
-    name: String, 
+    name: String,
     size: u32,
 }
 
