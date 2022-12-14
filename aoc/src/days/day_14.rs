@@ -1,4 +1,7 @@
+use crate::Problem;
 use std::collections::HashSet;
+
+pub struct DayFourteen;
 
 fn simulate_drop(coords: &HashSet<(u32, u32)>, max_y: u32, floor: bool) -> Option<(u32, u32)> {
     let mut coord = (500, 0);
@@ -21,7 +24,6 @@ fn get_walls(input: &str) -> HashSet<(u32, u32)> {
     let mut walls = HashSet::new();
 
     for line in input.lines() {
-        dbg!(&line);
         let corners: Vec<(u32, u32)> = line
             .split(" -> ")
             .map(|x| (x.split(",").collect::<Vec<&str>>()[0].parse().unwrap(), x.split(",").collect::<Vec<&str>>()[1].parse().unwrap()))
@@ -60,52 +62,56 @@ fn get_walls(input: &str) -> HashSet<(u32, u32)> {
 }
 
 
-fn part_a() -> u32 {
-    let input = "498,4 -> 498,6 -> 496,6
-503,4 -> 502,4 -> 502,9 -> 494,9";
-    
-    let mut coords = get_walls(&input);
-    let max_y: u32 = coords.iter().map(|x| x.1).max().unwrap();
+impl Problem for DayFourteen {
+    fn part_one(&self, input: &str) -> String {
+        let mut coords = get_walls(&input);
+        let max_y: u32 = coords.iter().map(|x| x.1).max().unwrap();
 
-    let mut count = 0;
-    loop {
-        match simulate_drop(&coords, max_y, false) {
-            Some(coord) => {coords.insert(coord); count += 1;},
-            None => {break;},
+        let mut count = 0;
+        loop {
+            match simulate_drop(&coords, max_y, false) {
+                Some(coord) => {coords.insert(coord); count += 1;},
+                None => {break;},
+            }
         }
+
+        format!("Number until fall: {count}")
     }
-    count
-}
 
-fn part_b() -> u32 {
-    let input = "498,4 -> 498,6 -> 496,6
-503,4 -> 502,4 -> 502,9 -> 494,9";
-    
-    let mut coords = get_walls(&input);
-    let max_y: u32 = coords.iter().map(|x| x.1).max().unwrap();
+    fn part_two(&self, input: &str) -> String {
+        let mut coords = get_walls(&input);
+        let max_y: u32 = coords.iter().map(|x| x.1).max().unwrap();
 
-    let mut count = 0;
-    loop {
-        let coord = simulate_drop(&coords, max_y, true).unwrap(); // Should never be None with floor
-        coords.insert(coord);
-        count += 1;
-        if coord == (500, 0) {
-            break;
+        let mut count = 0;
+        loop {
+            let coord = simulate_drop(&coords, max_y, true).unwrap(); // Should never be None with floor
+            coords.insert(coord);
+            count += 1;
+            if coord == (500, 0) {
+                break;
+            }
         }
+        format!("Number until bottleneck: {count}")
     }
-    count
-}
-
-fn main() {
-    let part_a = part_a();
-    println!("Part a: {part_a}");
-    let part_b = part_b();
-    println!("Part b: {part_b}");
 }
 
 
-//@@@ test 
-//"498,4 -> 498,6 -> 496,6
-//503,4 -> 502,4 -> 502,9 -> 494,9" 
-//== 24 for part a
-// == 93 for part b
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "498,4 -> 498,6 -> 496,6
+503,4 -> 502,4 -> 502,9 -> 494,9";
+
+    #[test]
+    fn test_sand_drop_p1() {
+        let output = DayFourteen{}.part_one(&INPUT);
+        assert_eq!(output, "Number until fall: 24")
+    }
+
+    #[test]
+    fn test_sand_drop_p2() {
+        let output = DayFourteen{}.part_two(&INPUT);
+        assert_eq!(output, "Number until bottleneck: 93")
+    }
+}

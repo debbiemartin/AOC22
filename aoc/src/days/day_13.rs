@@ -11,9 +11,6 @@ enum Comparison {
 }
 
 fn compare_line_recursive(left: &mut String, right: &mut String) -> Comparison {
-    let mut comparison = Comparison::Undetermined;
-    let mut tmp_string = String::new();
-
     loop {
         if left == "" && right == "" {
             return Comparison::Undetermined
@@ -23,13 +20,15 @@ fn compare_line_recursive(left: &mut String, right: &mut String) -> Comparison {
             return Comparison::Incorrect
         }
 
+        let comparison;
+
         if left.starts_with("]") && right.starts_with("]") {
             lazy_static! {
                 static ref REGEX_EOL: Regex = Regex::new(r"^\](,)?(?P<remaining>[0-9\s\]\[,]*)$").unwrap();
             }
             *left = String::from(REGEX_EOL.captures(left).unwrap().name("remaining").unwrap().as_str());
             *right = String::from(REGEX_EOL.captures(right).unwrap().name("remaining").unwrap().as_str());
-            comparison = Comparison::Undetermined
+            comparison = Comparison::Undetermined;
         } else if left.starts_with("]") && ! right.starts_with("]") {
             comparison = Comparison::Correct;
         } else if ! left.starts_with("]") && right.starts_with("]") {
@@ -40,12 +39,12 @@ fn compare_line_recursive(left: &mut String, right: &mut String) -> Comparison {
             comparison = compare_line_recursive(left, right);
         } else if left.starts_with("[") && ! right.starts_with("[") {
             left.drain(0..1);
-            tmp_string = format!("{}]", right.chars().next().unwrap());
+            let mut tmp_string = format!("{}]", right.chars().next().unwrap());
             comparison = compare_line_recursive(left, &mut tmp_string);
             right.drain(0..1);
         } else if ! left.starts_with("[") && right.starts_with("[") {
             right.drain(0..1);
-            tmp_string = format!("{}]", left.chars().next().unwrap());
+            let mut tmp_string = format!("{}]", left.chars().next().unwrap());
             comparison = compare_line_recursive(&mut tmp_string, right);
             left.drain(0..1);
         } else {
@@ -62,7 +61,7 @@ fn compare_line_recursive(left: &mut String, right: &mut String) -> Comparison {
                 Ordering::Less => Comparison::Correct,
                 Ordering::Equal => Comparison::Undetermined,
                 Ordering::Greater => Comparison::Incorrect,
-            }
+            };
         }
         
         match comparison {
