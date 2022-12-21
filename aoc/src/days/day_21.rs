@@ -52,6 +52,73 @@ struct Monkeys {
 }
 
 impl Monkeys {
+    fn contains_humn(&self, name: &String) -> bool {
+        if *name == String::from("humn") {
+            return true
+        }
+
+        let monkey = self.monkeys.get(name).unwrap();
+        if let Some(_) = monkey.number {
+            return false;
+        }
+
+        if let Some(x) = &monkey.sum {
+            let (monkey_a_name, monkey_b_name, _) = x;
+
+            return self.contains_humn(&monkey_a_name) || self.contains_humn(&monkey_b_name);
+        }
+
+        panic!("Couldn't find answer or sum on monkey");
+    }
+
+    fn find_humn_value(&self, equal: u64, name: &String) -> u64 {
+        if *name == String::from("humn") {
+            return equal
+        }
+
+        let monkey = self.monkeys.get(name).unwrap();
+        if let Some(x) = &monkey.sum {
+            let (monkey_a, monkey_b, operator) = x;
+            if self.contains_humn(&monkey_a) {
+                let monkey_b_val = self.get_value(&monkey_b);
+                let value = match operator {
+                    Operation::Add => equal - monkey_b_val,
+                    Operation::Subtract => equal + monkey_b_val,
+                    Operation::Multiply => equal / monkey_b_val,
+                    Operation::Divide => equal * monkey_b_val,
+                };
+                return self.find_humn_value(value, &monkey_a);
+            } else if self.contains_humn(&monkey_b) {
+                let monkey_a_val = self.get_value(&monkey_a);
+                let value = match operator {
+                    Operation::Add => equal - monkey_a_val,
+                    Operation::Subtract => monkey_a_val - equal,
+                    Operation::Multiply => equal / monkey_a_val,
+                    Operation::Divide => monkey_a_val / equal,
+                };
+                return self.find_humn_value(value, &monkey_b);
+            }
+        }
+        panic!("humn not found");
+    }   
+
+    fn find_humn_root_equal(&self) -> u64 {
+        let root = self.monkeys.get(&String::from("root")).unwrap();
+        
+        if let Some(x) = &root.sum {
+            let (monkey_a, monkey_b, _) = x;
+            if self.contains_humn(&monkey_a) {
+                let value = self.get_value(&monkey_b);
+                return self.find_humn_value(value, &monkey_a);
+            } else if self.contains_humn(&monkey_b) {
+                let value = self.get_value(&monkey_a);
+                return self.find_humn_value(value, &monkey_b);
+            }
+        }
+
+        panic!("humn not found");
+    }
+
     fn get_value(&self, name: &String) -> u64 {
         let monkey = self.monkeys.get(name).unwrap();
         if let Some(x) = monkey.number {
@@ -61,8 +128,8 @@ impl Monkeys {
         if let Some(x) = &monkey.sum {
             let (monkey_a_name, monkey_b_name, operator) = x;
 
-            let monkey_a = self.get_value(monkey_a_name);
-            let monkey_b = self.get_value(monkey_b_name);
+            let monkey_a = self.get_value(&monkey_a_name);
+            let monkey_b = self.get_value(&monkey_b_name);
 
             let answer = match operator {
                 Operation::Add => monkey_a + monkey_b,
@@ -70,7 +137,6 @@ impl Monkeys {
                 Operation::Multiply => monkey_a * monkey_b,
                 Operation::Divide => monkey_a / monkey_b,
             };
-            //@@@ mutable issues - need to re-get monkey.number = Some(answer);
             return answer;
         }
 
@@ -97,8 +163,10 @@ impl Problem for DayTwentyOne {
         format!("Root number: {root}")
     }
 
-    fn part_two(&self, _input: &str) -> String {
-        format!("Not yet implemented")
+    fn part_two(&self, input: &str) -> String {
+        let monkeys = Monkeys::new(&input);
+        let humn = monkeys.find_humn_root_equal();
+        format!("humn number: {humn}")
     }
 }
 
@@ -124,8 +192,14 @@ drzm: hmdt - zczc
 hmdt: 32";
 
     #[test]
-    fn test_cipher_p1() {
+    fn test_monkeys_p1() {
         let output = DayTwentyOne{}.part_one(&INPUT);
         assert_eq!(output, "Root number: 152")
+    }
+
+    #[test]
+    fn test_monkeys_p2() {
+        let output = DayTwentyOne{}.part_two(&INPUT);
+        assert_eq!(output, "humn number: 301")
     }
 }
