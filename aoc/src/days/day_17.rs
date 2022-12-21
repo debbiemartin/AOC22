@@ -94,7 +94,7 @@ impl Pyroclastic {
             }
         }
 
-        return None //@@@ split this out into two different functions?
+        return None
     }
 
     fn new(input: &str) -> Pyroclastic { 

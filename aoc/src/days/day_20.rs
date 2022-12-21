@@ -4,8 +4,7 @@ use std::collections::VecDeque;
 pub struct DayTwenty;
 
 struct Cipher {
-    content: VecDeque<(i64, usize)>,
-    decryption_key: i64
+    content: VecDeque<(i64, usize)>
 }
 
 impl Cipher {   
@@ -38,7 +37,7 @@ impl Cipher {
             content.push_back(((num * decryption_key), i));
         }
 
-        Cipher { content, decryption_key }
+        Cipher { content }
     }
 }
 
